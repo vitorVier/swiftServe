@@ -15,9 +15,13 @@ export class AddItemOrderService {
             if (!orderExists) throw new Error("Order not found")
 
             const productExists = await prismaClient.product.findFirst({
-                where: { id: productId, disabled: false }
+                where: { id: productId }
             })
             if (!productExists) throw new Error("Product not found")
+
+            if (productExists.disabled) {
+                throw new Error("Produto fora de estoque");
+            }
 
             const item = await prismaClient.orderItem.create({
                 data: {

@@ -25,6 +25,7 @@ import { DetailOrderController } from "./controllers/orders/detailOrderControlle
 import { SendOrderController } from "./controllers/orders/SendOrderController";
 import { FinishOrderController } from "./controllers/orders/finishOrderController";
 import { DeleteOrderController } from "./controllers/orders/deleteOrderController";
+import { ToggleProductController } from "./controllers/product/ToggleProductController";
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -49,6 +50,7 @@ router.post(
 )
 router.get("/products", isAuth, validateSchema(listProductSchema), new ListProductController().handle)
 router.delete("/product", isAuth, isAdmin, new DeleteProductController().handle)
+router.put("/product/status", isAuth, isAdmin, new ToggleProductController().handle)
 router.get("/category/products", isAuth, validateSchema(listProductByCategorySchema), new ListProductByCategoryController().handle)
 
 // Order routes
