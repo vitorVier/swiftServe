@@ -106,7 +106,7 @@ export function ProductForm({ categories }: ProductFormProps) {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden bg-app-card border-app-border text-white shadow-2xl">
+            <DialogContent className="sm:max-w-137.5 p-0 overflow-hidden bg-app-card border-app-border text-white shadow-2xl">
                 {/* Header */}
                 <div className="p-6 pb-4 bg-white/2 border-b border-app-border/50">
                     <DialogHeader>
@@ -117,7 +117,7 @@ export function ProductForm({ categories }: ProductFormProps) {
                     </DialogHeader>
                 </div>
 
-                <form className="p-6 space-y-5 max-h-[70vh] overflow-y-auto custom-scrollbar" onSubmit={handleCreateProduct}>
+                <form className="px-6 py-5 space-y-5 max-h-[70vh] overflow-y-auto custom-scrollbar" onSubmit={handleCreateProduct}>
                     <div className="space-y-1">
                         <Label htmlFor="product" className="text-[10px] uppercase tracking-widest font-bold text-gray-500 ml-1">
                             Nome do produto
@@ -175,7 +175,7 @@ export function ProductForm({ categories }: ProductFormProps) {
                             name="description"
                             required
                             placeholder="Descreva os ingredientes ou detalhes do produto..."
-                            className="flex min-h-[100px] w-full rounded-md border border-app-border bg-app-background/50 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:border-brand-primary transition-all"
+                            className="flex min-h-25 w-full rounded-md border border-app-border bg-app-background/50 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:border-brand-primary transition-all"
                         />
                     </div>
 

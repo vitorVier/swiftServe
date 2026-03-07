@@ -10,10 +10,10 @@ export default async function Categories() {
     const categories = await apiClient<Category[]>("/categories", { token: token! })
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-8 p-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header */}
             <div className="flex sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-app-border/40">
-                <div>
+                <div className="space-y-1">
                     <h1 className="text-2xl font-bold tracking-tight text-white">Categorias</h1>
                     <p className="text-xs sm:text-sm text-gray-400">Gerencie o catálogo de produtos</p>
                 </div>
@@ -39,7 +39,7 @@ export default async function Categories() {
                                hover:bg-app-card/90 active:scale-[0.98]"
                         >
                             {/* Linha de destaque lateral */}
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-gray-400 group-hover:h-1/2 transition-all duration-300" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-gray-400 group-hover:h-1/2 transition-all duration-300" />
 
                             <CardHeader className="p-4">
                                 <CardTitle className="flex items-center gap-3 text-sm md:text-base font-medium">

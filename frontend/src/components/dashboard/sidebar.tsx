@@ -9,7 +9,7 @@ import { logOutUser } from "@/actions/auth";
 export const menuItems = [
     {
         title: "Pedidos",
-        href: "/dashboard/orders",
+        href: "/dashboard",
         icon: ShoppingCart
     },
     {

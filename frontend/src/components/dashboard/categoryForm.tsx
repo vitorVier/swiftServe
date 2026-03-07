@@ -38,7 +38,7 @@ export function CategoryForm() {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-[425px] p-0 overflow-hidden bg-app-card border-app-border text-white shadow-2xl">
+            <DialogContent className="sm:max-w-106.25 p-0 overflow-hidden bg-app-card border-app-border text-white shadow-2xl">
                 <div className="p-6 pb-4 bg-white/2 border-b border-app-border/50">
                     <DialogHeader>
                         <DialogTitle className="text-xl font-bold tracking-tight">
