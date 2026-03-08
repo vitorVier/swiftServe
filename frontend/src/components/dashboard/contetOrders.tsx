@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { ModalOrder } from "./modalOrder";
 
 // ─── Pipeline Types
 type PipelineStage = "pending" | "preparing" | "ready";
@@ -50,6 +51,7 @@ function getTimeBadgeClass(createdAt: string): string {
 export default function ContentOrders({ token }: { token: string }) {
     const [loading, setLoading] = useState(false);
     const [orders, setOrders] = useState<Order[]>([]);
+    const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
     const [pipeline, setPipeline] = useState<Map<string, PipelineStage>>(new Map());
     const [actionLoading, setActionLoading] = useState<Set<string>>(new Set());
     const [tick, setTick] = useState(0); // Força re-render a cada minuto para buscar atualização
@@ -252,7 +254,9 @@ export default function ContentOrders({ token }: { token: string }) {
                                     <div className="space-y-2 flex flex-wrap justify-between gap-3">
                                         <Button
                                             size="sm"
-                                            className="flex-1 bg-brand-primary hover:bg-brand-primary w-full xl:w-auto"
+                                            variant="ghost"
+                                            className="flex-1 text-gray-300 hover:text-white hover:bg-white/5 border border-transparent hover:border-app-border/40 transition-all gap-2"
+                                            onClick={() => setSelectedOrder(order.id)}
                                         >
                                             <EyeIcon className="w-5 h-5" />
                                             Detalhes
@@ -304,6 +308,17 @@ export default function ContentOrders({ token }: { token: string }) {
                     })}
                 </div>
             )}
+
+            <ModalOrder
+                orderId={selectedOrder}
+                stage={selectedOrder ? getStage(selectedOrder) : undefined}
+                onStageChange={(s) => selectedOrder && setStage(selectedOrder, s)}
+                onClose={async () => {
+                    setSelectedOrder(null)
+                    await fetchOrders();
+                }}
+                token={token}
+            />
         </div>
     )
 }

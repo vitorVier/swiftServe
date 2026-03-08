@@ -61,7 +61,7 @@ router.get("/orders", isAuth, new ListOrdersController().handle); // Lista todas
 // Adicionar, remover e detalhar item de uma order
 router.post("/order/add", isAuth, validateSchema(addItemOrderSchema), new AddItemOrderController().handle); // Adiciona item na order
 router.delete("/order/remove", isAuth, validateSchema(removeOrderItemSchema), new RemoveOrderItemController().handle) // Remove item da order
-router.get("/order/detail", isAuth, validateSchema(detailOrderSchema), new DetailOrderController().handle) // Detalha order
+router.get("/order/details", isAuth, validateSchema(detailOrderSchema), new DetailOrderController().handle) // Detalha order
 
 router.put("/order/send", isAuth, validateSchema(sendOrderSchema), new SendOrderController().handle) // Encaminha pedido para a cozinha
 router.put("/order/finish", isAuth, validateSchema(finishOrderSchema), new FinishOrderController().handle) // Cozinha finaliza o pedido
