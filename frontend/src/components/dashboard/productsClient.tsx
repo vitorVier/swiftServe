@@ -108,7 +108,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                 <Button
                     variant={activeTab === "Todos" ? "default" : "outline"}
                     className={`rounded-full px-6 transition-all ${activeTab === "Todos" ? 'bg-brand-primary text-white hover:bg-brand-primary/90' : 'bg-transparent text-gray-400 border-app-border hover:text-white hover:border-gray-500 hover:bg-white/5'}`}
-                    onClick={() => () => handleTabChange("Todos")}
+                    onClick={() => handleTabChange("Todos")}
                 >
                     Todos
                 </Button>
