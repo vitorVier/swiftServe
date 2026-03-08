@@ -36,7 +36,7 @@ export default async function Categories() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     {categories.map((category) => (
-                        <Link href={`/dashboard/categories/${category.name}`} key={category.id}>
+                        <Link href={`/dashboard/products?category=${category.name}`} key={category.id}>
                             <Card
                                 className="group relative bg-app-card border-app-border/60 text-white 
                                 transition-all duration-200 hover:border-gray-500/30 

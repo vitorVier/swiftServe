@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Category, Product } from "@/lib/types";
 import { Trash2, Image as ImageIcon, SearchIcon, Package } from "lucide-react";
 import Image from "next/image";
@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { ProductForm } from "./productForm";
 import { toggleProductStatus, deleteProduct } from "@/actions/products";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 interface ProductsClientProps {
     categories: Category[];
@@ -20,10 +21,33 @@ interface ProductsClientProps {
 
 export function ProductsClient({ categories, initialProducts }: ProductsClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
-    const [activeTab, setActiveTab] = useState("Todos");
+    // const [activeTab, setActiveTab] = useState("Todos");
     const [products, setProducts] = useState<Product[]>(initialProducts);
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const activeTab = searchParams.get("category") || "Todos";
+
+    const createQueryString = useCallback((name: string, value: string) => {
+        const params = new URLSearchParams(searchParams.toString()); // Pegamos o valor do nome da categoria em formato de string
+
+        if (value === "Todos") {
+            params.delete(name); // Limpa a URL se for "Todos"
+        } else {
+            params.set(name, value); // O '.set' adiciona o par nome=valor (ex: category=Bebidas). Se a chave "category" já existisse, ela seria apenas atualizada.
+        }
+
+        return params.toString();
+    }, [searchParams]);
+
+    const handleTabChange = (categoryName: string) => {
+        const queryString = createQueryString("category", categoryName);
+        router.push(`${pathname}?${queryString}`, { scroll: false });
+    };
 
     const filteredProducts = products.filter(product => {
         const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -84,7 +108,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                 <Button
                     variant={activeTab === "Todos" ? "default" : "outline"}
                     className={`rounded-full px-6 transition-all ${activeTab === "Todos" ? 'bg-brand-primary text-white hover:bg-brand-primary/90' : 'bg-transparent text-gray-400 border-app-border hover:text-white hover:border-gray-500 hover:bg-white/5'}`}
-                    onClick={() => setActiveTab("Todos")}
+                    onClick={() => () => handleTabChange("Todos")}
                 >
                     Todos
                 </Button>
@@ -93,7 +117,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                         key={category.id}
                         variant={activeTab === category.name ? "default" : "outline"}
                         className={`rounded-full px-6 transition-all ${activeTab === category.name ? 'bg-brand-primary text-white hover:bg-brand-primary/90' : 'bg-transparent text-gray-400 border-app-border hover:text-white hover:border-gray-500 hover:bg-white/5'}`}
-                        onClick={() => setActiveTab(category.name)}
+                        onClick={() => handleTabChange(category.name)}
                     >
                         {category.name}
                     </Button>
