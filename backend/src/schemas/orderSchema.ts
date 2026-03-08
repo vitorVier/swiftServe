@@ -44,7 +44,14 @@ export const sendOrderSchema = z.object({
 
 export const finishOrderSchema = z.object({
     body: z.object({
-        orderId: z.string("O id do pedido deve ser uma string").min(1, { message: "O id do pedido é obrigatório" })
+        orderId: z.string()
+    })
+})
+
+export const updateStageSchema = z.object({
+    body: z.object({
+        orderId: z.string(),
+        stage: z.enum(["pending", "preparing", "ready"])
     })
 })
 

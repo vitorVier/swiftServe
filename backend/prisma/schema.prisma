@@ -72,6 +72,7 @@ model Order {
   status Boolean @default(false) // false = Pedido pendente, true = Pronto
   draft Boolean @default(true) // false = Pedido em rascunho, true = Pedido enviado pra cozinha
   name String? // Nome do cliente, opcional
+  stage String @default("pending") // pending | preparing | ready
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

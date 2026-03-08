@@ -12,6 +12,7 @@ export class DetailOrderService {
                     name: true,
                     draft: true,
                     status: true,
+                    stage: true,
                     createdAt: true,
                     updatedAt: true,
                     items: {

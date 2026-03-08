@@ -17,7 +17,7 @@ import { ListProductController } from "./controllers/product/listProductControll
 import { DeleteProductController } from "./controllers/product/deleteProductController";
 import { ListProductByCategoryController } from "./controllers/product/listProductByCategoryController";
 import { ListOrdersController } from "./controllers/orders/listOrdersController";
-import { addItemOrderSchema, createOrderSchema, deleteOrderSchema, detailOrderSchema, finishOrderSchema, removeOrderItemSchema, sendOrderSchema } from "./schemas/orderSchema";
+import { addItemOrderSchema, createOrderSchema, deleteOrderSchema, detailOrderSchema, finishOrderSchema, removeOrderItemSchema, sendOrderSchema, updateStageSchema } from "./schemas/orderSchema";
 import { CreateOrderController } from "./controllers/orders/createOrderController";
 import { AddItemOrderController } from "./controllers/orders/addItemOrderController";
 import { RemoveOrderItemController } from "./controllers/orders/removeOrderItemController";
@@ -26,6 +26,7 @@ import { SendOrderController } from "./controllers/orders/SendOrderController";
 import { FinishOrderController } from "./controllers/orders/finishOrderController";
 import { DeleteOrderController } from "./controllers/orders/deleteOrderController";
 import { ToggleProductController } from "./controllers/product/ToggleProductController";
+import { UpdateStageOrderController } from "./controllers/orders/updateStageOrderController";
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -65,7 +66,7 @@ router.get("/order/details", isAuth, validateSchema(detailOrderSchema), new Deta
 
 router.put("/order/send", isAuth, validateSchema(sendOrderSchema), new SendOrderController().handle) // Encaminha pedido para a cozinha
 router.put("/order/finish", isAuth, validateSchema(finishOrderSchema), new FinishOrderController().handle) // Cozinha finaliza o pedido
-
+router.put("/order/stage", isAuth, validateSchema(updateStageSchema), new UpdateStageOrderController().handle) // Atualiza o estágio do pedido na pipeline
 
 export { router };
 

@@ -10,6 +10,7 @@ export class ListOrdersService {
                 name: true,
                 draft: true,
                 status: true,
+                stage: true,
                 createdAt: true,
                 updatedAt: true,
                 items: {

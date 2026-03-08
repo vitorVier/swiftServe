@@ -11,13 +11,14 @@ export class CreateOrderService {
             const order = await prismaClient.order.create({
                 data: {
                     table: table,
-                    name: name
+                    name: name,
                 },
                 select: {
                     id: true,
                     table: true,
                     status: true,
                     draft: true,
+                    stage: true,
                     name: true,
                     createdAt: true
                 }

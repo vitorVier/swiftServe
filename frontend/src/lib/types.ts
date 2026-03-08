@@ -54,6 +54,7 @@ export interface Order {
     name?: string;
     status: boolean; // false = produção | true = finalizado
     draft: boolean; // true = rascunho   | true = enviar para produção
+    stage: "pending" | "preparing" | "ready";
     createdAt: string;
     items: OrderItems[];
 }

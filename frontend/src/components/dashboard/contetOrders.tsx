@@ -10,6 +10,7 @@ import { Badge } from "../ui/badge";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { ModalOrder } from "./modalOrder";
+import { updateOrderStage } from "@/actions/orders";
 
 // ─── Pipeline Types
 type PipelineStage = "pending" | "preparing" | "ready";
@@ -57,15 +58,9 @@ export default function ContentOrders({ token }: { token: string }) {
     const [tick, setTick] = useState(0); // Força re-render a cada minuto para buscar atualização
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    // refresh time display every minute
-    useEffect(() => {
-        timerRef.current = setInterval(() => setTick(t => t + 1), 60_000); // Atualiza a lista de pedidos a cada 1min
-        return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    }, []);
-
-    const fetchOrders = useCallback(async () => {
+    const fetchOrders = useCallback(async (showLoading = true) => {
         try {
-            setLoading(true);
+            if (showLoading) setLoading(true);
             const res = await apiClient<Order[]>("/orders?draft=false", {
                 method: "GET",
                 cache: "no-store",
@@ -74,12 +69,38 @@ export default function ContentOrders({ token }: { token: string }) {
 
             const pendingOrders = res.filter(order => !order.status);
             setOrders(pendingOrders);
+
+            // Popula a pipeline inicial com os valores do banco
+            setPipeline(prev => {
+                const nw = new Map(prev);
+
+                pendingOrders.forEach(o => {
+                    if (!actionLoading.has(o.id)) {
+                        // Garante que se a API não mandar nada, ele fica pending
+                        const currentStage = o.stage || "pending";
+                        nw.set(o.id, currentStage);
+                    }
+                });
+
+                return nw;
+            });
         } catch (err) {
             console.error(err);
         } finally {
-            setLoading(false);
+            if (showLoading) setLoading(false);
         }
     }, [token]);
+
+    // refresh time display every minute and fetch latest orders periodically
+    useEffect(() => {
+        timerRef.current = setInterval(() => {
+            setTick(t => t + 1);
+            fetchOrders(false);
+        }, 30_000); // Polling a cada 30 segundos
+        return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    }, [fetchOrders]);
+
+
 
     useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
@@ -88,11 +109,23 @@ export default function ContentOrders({ token }: { token: string }) {
         return order.items.reduce((total, item) => total + item.product.price * item.amount, 0);
     };
 
-    const getStage = (orderId: string): PipelineStage =>
-        pipeline.get(orderId) ?? "pending";
+    const getStage = (orderId: string): PipelineStage => pipeline.get(orderId) ?? "pending";
 
-    const setStage = (orderId: string, stage: PipelineStage) => {
-        setPipeline(prev => new Map(prev).set(orderId, stage));
+    const setStage = async (orderId: string, stage: PipelineStage) => {
+        setActionLoading(prev => new Set(prev).add(orderId));
+
+        try {
+            const result = await updateOrderStage(orderId, stage);
+
+            if (result.success) {
+                // Se OK na API, atualizamos a visão local imediatamente para evitar recarregamento perceptível
+                setPipeline(prev => new Map(prev).set(orderId, stage));
+            } else {
+                console.error(result.error);
+            }
+        } finally {
+            setActionLoading(prev => { const s = new Set(prev); s.delete(orderId); return s; });
+        }
     };
 
     const handleFinalize = async (orderId: string) => {
@@ -133,7 +166,7 @@ export default function ContentOrders({ token }: { token: string }) {
 
                 <div className="shrink-0 self-center">
                     <Button
-                        onClick={fetchOrders}
+                        onClick={() => fetchOrders()}
                         disabled={loading}
                         className="bg-white text-black hover:text-white hover:bg-brand-primary gap-2"
                     >
@@ -312,7 +345,9 @@ export default function ContentOrders({ token }: { token: string }) {
             <ModalOrder
                 orderId={selectedOrder}
                 stage={selectedOrder ? getStage(selectedOrder) : undefined}
-                onStageChange={(s) => selectedOrder && setStage(selectedOrder, s)}
+                onStageChange={async (s) => {
+                    if (selectedOrder) await setStage(selectedOrder, s);
+                }}
                 onClose={async () => {
                     setSelectedOrder(null)
                     await fetchOrders();

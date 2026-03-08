@@ -68,7 +68,7 @@ const STAGE_CONFIG: Record<PipelineStage, {
 interface ModalOrderProps {
     orderId: string | null;
     stage?: PipelineStage;
-    onStageChange?: (stage: PipelineStage) => void;
+    onStageChange?: (stage: PipelineStage) => Promise<void>;
     onClose: () => Promise<void>;
     token: string;
 }
@@ -110,13 +110,14 @@ export function ModalOrder({ orderId, stage = "pending", onStageChange, onClose,
     // Pipeline: avança o estágio ou, no último, finaliza via API
     const handleAction = async () => {
         if (!orderId) return;
-        if (config.next) {
-            // Propaga a mudança de estágio ao pai para sincronizar card e modal
-            onStageChange?.(config.next);
-        } else {
-            // Último estágio → chama a API de finalização
-            setActionLoading(true);
-            try {
+
+        setActionLoading(true);
+        try {
+            if (config.next) {
+                // Propaga a mudança de estágio ao pai (que persiste na API) e aguarda completar
+                await onStageChange?.(config.next);
+            } else {
+                // Último estágio → chama a API de finalização
                 const result = await finishOrder(orderId);
                 if (result.success) {
                     await onClose();
@@ -124,9 +125,9 @@ export function ModalOrder({ orderId, stage = "pending", onStageChange, onClose,
                 } else {
                     console.error(result.error);
                 }
-            } finally {
-                setActionLoading(false);
             }
+        } finally {
+            setActionLoading(false);
         }
     };
 
