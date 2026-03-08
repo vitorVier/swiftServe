@@ -44,7 +44,7 @@ export function MobileSidebar() {
                                     return (
                                         <Link href={menu.href} key={menu.title} className={cn(
                                             "flex items-center font-medium gap-3 px-3 py-2 text-sm rounded-lg transition-colors duration-300 text-white",
-                                            isActive ? 'bg-brand-primary text-white' : 'hover:bg-gray-500'
+                                            isActive ? 'bg-brand-primary text-white' : 'bg-transparent text-gray-400 border-app-border hover:text-white hover:border-gray-500 hover:bg-white/5'
                                         )}>
                                             <Icon className="w-5 h-5" />
                                             {menu.title}

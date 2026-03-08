@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Category, Product } from "@/lib/types";
-import { Trash2, Tags, Image as ImageIcon, SearchIcon } from "lucide-react";
+import { Trash2, Image as ImageIcon, SearchIcon, Package } from "lucide-react";
 import Image from "next/image";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { Switch } from "@/components/ui/switch";
 import { ProductForm } from "./productForm";
 import { toggleProductStatus, deleteProduct } from "@/actions/products";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface ProductsClientProps {
     categories: Category[];
@@ -122,7 +122,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                 {filteredProducts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-24 text-center">
                         <div className="bg-app-card/50 p-6 rounded-full mb-4">
-                            <Tags className="w-12 h-12 text-gray-600" />
+                            <Package className="w-12 h-12 text-gray-600" />
                         </div>
                         <p className="text-gray-400 text-lg font-medium">Nenhum produto encontrado.</p>
                         {searchQuery || activeTab !== "Todos" ? (
@@ -136,12 +136,12 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                         <Table>
                             <TableHeader className="bg-app-background/50">
                                 <TableRow className="border-app-border/40 hover:bg-transparent">
-                                    <TableHead className="w-20 text-gray-400 font-semibold uppercase text-[10px] tracking-wider py-5 pl-7.5">Item</TableHead>
+                                    <TableHead className="w-16 text-gray-400 font-semibold uppercase text-[10px] tracking-wider py-3 pl-4">Item</TableHead>
                                     <TableHead className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider">Informações</TableHead>
                                     <TableHead className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider">Categoria</TableHead>
                                     <TableHead className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider text-right">Preço</TableHead>
                                     <TableHead className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider text-center">Status</TableHead>
-                                    <TableHead className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider text-right pr-6">Ações</TableHead>
+                                    <TableHead className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider text-right pr-4">Ações</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -150,8 +150,8 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                                         key={product.id}
                                         className="group border-app-border/20 hover:bg-white/3 transition-all duration-300"
                                     >
-                                        <TableCell className="py-5 pl-6">
-                                            <div className="relative h-20 w-30 rounded-xl overflow-hidden ring-2 ring-app-border/20 group-hover:ring-brand-primary/30 transition-all">
+                                        <TableCell className="py-3 pl-4">
+                                            <div className="relative h-12 w-16 rounded-lg overflow-hidden ring-2 ring-app-border/20 group-hover:ring-brand-primary/30 transition-all">
                                                 {product.banner ? (
                                                     <Image
                                                         src={product.banner}
@@ -161,7 +161,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                                                     />
                                                 ) : (
                                                     <div className="w-full h-full bg-app-background flex items-center justify-center">
-                                                        <ImageIcon className="text-gray-700 w-6 h-6" />
+                                                        <ImageIcon className="text-gray-700 w-5 h-5" />
                                                     </div>
                                                 )}
                                             </div>
@@ -169,7 +169,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
 
                                         <TableCell>
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-white text-base group-hover:text-brand-primary transition-colors">
+                                                <span className="font-bold text-white text-sm group-hover:text-brand-primary transition-colors">
                                                     {product.name}
                                                 </span>
                                                 <span className="text-xs text-gray-500 line-clamp-1 max-w-75">
@@ -190,7 +190,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                                         </TableCell>
 
                                         <TableCell className="text-right">
-                                            <span className="text-white font-black text-lg">
+                                            <span className="text-white font-bold text-base">
                                                 {formatedPrice(product.price)}
                                             </span>
                                         </TableCell>
@@ -203,7 +203,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                                             />
                                         </TableCell>
 
-                                        <TableCell className="text-right pr-6">
+                                        <TableCell className="text-right pr-4">
                                             <div className="flex justify-end items-center gap-2 transition-opacity duration-300">
                                                 <Button
                                                     variant="ghost"

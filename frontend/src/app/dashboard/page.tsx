@@ -1,11 +1,7 @@
-import { requiredAdmin } from "@/lib/auth"
+import ContentOrders from "@/components/dashboard/contetOrders";
+import { getToken } from "@/lib/auth";
 
 export default async function Dashboard() {
-    const user = await requiredAdmin();
-
-    return (
-        <div>
-            <h1>Bem-vindo {user.name}</h1>
-        </div>
-    )
+    const token = await getToken();
+    return <ContentOrders token={token!} />
 }

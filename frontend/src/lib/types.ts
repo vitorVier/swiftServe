@@ -35,3 +35,25 @@ export interface Product {
         name: string;
     }
 }
+
+export interface OrderItems {
+    id: string;
+    amount: number;
+    product: {
+        id: string;
+        name: string;
+        price: number;
+        description: string;
+        banner: string;
+    }
+}
+
+export interface Order {
+    id: string;
+    table: number;
+    name?: string;
+    status: boolean; // false = produção | true = finalizado
+    draft: boolean; // true = rascunho   | true = enviar para produção
+    createdAt: string;
+    items: OrderItems[];
+}
