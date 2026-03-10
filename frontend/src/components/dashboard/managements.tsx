@@ -7,6 +7,7 @@ import { User } from "@/lib/types";
 import { ProductForm } from "./productForm";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import { useState } from "react";
+import { CreateUserAdmin } from "./createUserAdmin";
 import { deleteUser } from "@/actions/auth";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 
@@ -49,6 +50,8 @@ export function Management({ users }: { users: User[] }) {
                         <SearchIcon className="w-4 h-4" />
                     </InputGroupAddon>
                 </InputGroup>
+
+                <CreateUserAdmin />
             </div>
 
             {/* Table Container */}
@@ -151,6 +154,7 @@ export function Management({ users }: { users: User[] }) {
                         >
                             Cancelar
                         </Button>
+
                         <Button
                             variant="destructive"
                             onClick={confirmDelete}

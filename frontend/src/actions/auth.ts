@@ -28,6 +28,37 @@ export async function registerUser(
     }
 }
 
+export async function createUserAdmin(
+    prevState: { success: boolean; error: string } | null,
+    formData: FormData
+) {
+    try {
+        const token = await getToken();
+        if (!token) return { success: false, error: "Não autorizado" };
+
+        const name = formData.get("name") as string;
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const role = formData.get("role") as string;
+        const data = { name, email, password, role };
+
+        await apiClient<User>("/users/admin", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        revalidatePath("/dashboard/user-management");
+
+        return { success: true, error: "" }
+    } catch (err) {
+        if (err instanceof Error) return { success: false, error: err.message }
+        return { success: false, error: "Erro ao criar usuário" }
+    }
+}
+
 export async function loginUser(
     prevState: { success: boolean; error: string, redirectTo?: string } | null,
     formData: FormData
