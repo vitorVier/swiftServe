@@ -27,6 +27,8 @@ import { FinishOrderController } from "./controllers/orders/finishOrderControlle
 import { DeleteOrderController } from "./controllers/orders/deleteOrderController";
 import { ToggleProductController } from "./controllers/product/ToggleProductController";
 import { UpdateStageOrderController } from "./controllers/orders/updateStageOrderController";
+import { ListUsersController } from "./controllers/user/listUsersController";
+import { DeleteUserController } from "./controllers/user/deleteUserController";
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -35,6 +37,8 @@ const upload = multer(uploadConfig);
 router.post("/users", validateSchema(createUserSchema), new CreateUserController().handle) // Criar usuário
 router.post("/session", validateSchema(authUserSchema), new AuthUserController().handle) // Autenticar usuário 
 router.get("/me", isAuth, new DetailUserController().handle) // Detalhes do usuário logado (precisa estar autenticado para acessar)
+router.get("/users", isAuth, isAdmin, new ListUsersController().handle); // Lista todos os usuários (apenas admin)
+router.delete("/user", isAuth, isAdmin, new DeleteUserController().handle); // Lista todos os usuários (apenas admin)
 
 // Category routes
 router.post("/categories", isAuth, isAdmin, validateSchema(createCategorySchema), new CreateCategoryController().handle) // Cria categoria

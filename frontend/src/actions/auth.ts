@@ -1,8 +1,9 @@
 "use server";
 
 import { apiClient } from "@/lib/api";
-import { removeToken, setToken } from "@/lib/auth";
+import { getToken, removeToken, setToken } from "@/lib/auth";
 import { AuthResponse, User } from "@/lib/types";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function registerUser(
@@ -53,4 +54,25 @@ export async function loginUser(
 export async function logOutUser() {
     await removeToken();
     redirect("/login");
+}
+
+export async function deleteUser(userId: string) {
+    try {
+        const token = await getToken();
+        if (!token) return { success: false, error: "Token não encontrado" }
+
+        await apiClient<User[]>(`/user?userId=${userId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            }
+        });
+
+        revalidatePath("/dashboard/user-management");
+
+        return { success: true, error: "" };
+    } catch (err) {
+        if (err instanceof Error) return { success: false, error: err.message }
+        return { success: false, error: "Erro ao deletar usuário" };
+    }
 }

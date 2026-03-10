@@ -1,6 +1,6 @@
 "use client"
 import { cn } from "@/lib/utils";
-import { LogOut, Package, ShoppingCart, Tags } from "lucide-react"
+import { LogOut, Package, ShoppingCart, Tags, User2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
@@ -18,9 +18,14 @@ export const menuItems = [
         icon: Package
     },
     {
-        title: "Categories",
+        title: "Categorias",
         href: "/dashboard/categories",
         icon: Tags
+    },
+    {
+        title: "Gerenciamento de usuários",
+        href: "/dashboard/user-management",
+        icon: User2
     }
 ];
 

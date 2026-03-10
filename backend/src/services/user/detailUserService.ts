@@ -12,15 +12,16 @@ export class DetailUserService {
                     name: true,
                     email: true,
                     role: true,
+                    isActive: true,
                     createdAt: true,
                 }
-            })        
+            })
 
-            if(!user) throw new Error("User not found");
+            if (!user) throw new Error("User not found");
 
             return user;
 
-        } catch(err) {
+        } catch (err) {
             console.error(err);
             throw new Error("Error fetching user details");
         }

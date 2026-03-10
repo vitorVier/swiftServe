@@ -1,12 +1,12 @@
 "use client"
 import { cn } from "@/lib/utils";
-import { LogOut, Menu, Package, ShoppingCart, Tags } from "lucide-react"
+import { LogOut, Menu } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import { logOutUser } from "@/actions/auth";
 import { useState } from "react";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { menuItems } from "./sidebar";
 
 export function MobileSidebar() {
