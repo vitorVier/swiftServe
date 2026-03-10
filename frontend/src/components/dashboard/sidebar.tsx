@@ -36,7 +36,7 @@ export function Sidebar({ userName }: { userName: string }) {
         <aside className="hidden lg:flex flex-col h-screen w-64 border-r border-app-border bg-app-sidebar">
             {/* Header */}
             <div className="border-b border-app-border p-6">
-                <h2 className="text-xl font-bold text-white">Dev<span className="text-brand-primary">Pizza</span></h2>
+                <h2 className="text-xl font-bold text-white">Swift<span className="text-brand-primary">Serve</span></h2>
                 <p className="text-sm text-gray-300 mt-1">Bem-vindo(a), {userName}</p>
             </div>
 

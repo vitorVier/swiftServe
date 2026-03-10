@@ -20,7 +20,7 @@ export function MobileSidebar() {
                     <div className="w-10"></div>
 
                     <h1 className="text-lg font-bold">
-                        Dev<span className="text-brand-primary">Pizza</span>
+                        Swift<span className="text-brand-primary">Serve</span>
                     </h1>
 
                     <Sheet open={open} onOpenChange={setOpen}>

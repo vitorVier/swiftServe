@@ -13,6 +13,6 @@ export class CreateUserAdminController {
             role: role
         });
 
-        res.json(user);
+        res.status(200).json(user);
     }
 }

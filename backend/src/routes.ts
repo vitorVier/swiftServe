@@ -3,8 +3,9 @@ import multer from "multer";
 import uploadConfig from "./config/multer";
 import { CreateUserController } from "./controllers/user/createUserController";
 import { CreateUserAdminController } from "./controllers/user/createUserAdminController";
+import { UpdateUserAdminController } from "./controllers/user/updateUserAdminController";
 import { validateSchema } from "./middlewares/validateSchema";
-import { createUserSchema, authUserSchema, createUserAdminSchema } from "./schemas/userSchema";
+import { createUserSchema, authUserSchema, createUserAdminSchema, updateUserAdminSchema } from "./schemas/userSchema";
 import { AuthUserController } from "./controllers/user/authUserController";
 import { DetailUserController } from "./controllers/user/detailUserController";
 import { isAuth } from "./middlewares/isAuth";
@@ -37,6 +38,7 @@ const upload = multer(uploadConfig);
 // User routes
 router.post("/users", validateSchema(createUserSchema), new CreateUserController().handle) // Criar usuário
 router.post("/users/admin", isAuth, isAdmin, validateSchema(createUserAdminSchema), new CreateUserAdminController().handle) // Criar usuário como admin
+router.put("/users/admin", isAuth, isAdmin, validateSchema(updateUserAdminSchema), new UpdateUserAdminController().handle) // Edit admin usuário
 router.post("/session", validateSchema(authUserSchema), new AuthUserController().handle) // Autenticar usuário 
 router.get("/me", isAuth, new DetailUserController().handle) // Detalhes do usuário logado (precisa estar autenticado para acessar)
 router.get("/users", isAuth, isAdmin, new ListUsersController().handle); // Lista todos os usuários (apenas admin)

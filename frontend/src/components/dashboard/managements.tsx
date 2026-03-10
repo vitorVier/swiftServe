@@ -8,6 +8,7 @@ import { ProductForm } from "./productForm";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import { useState } from "react";
 import { CreateUserAdmin } from "./createUserAdmin";
+import { EditUserAdmin } from "./editUserAdmin";
 import { deleteUser } from "@/actions/auth";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 
@@ -118,6 +119,7 @@ export function Management({ users }: { users: User[] }) {
 
                                         <TableCell className="text-right pr-4">
                                             <div className="flex justify-end items-center gap-2 transition-opacity duration-300">
+                                                <EditUserAdmin user={user} />
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
