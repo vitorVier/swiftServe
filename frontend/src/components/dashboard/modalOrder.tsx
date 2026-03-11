@@ -27,6 +27,7 @@ import {
     ShoppingBag,
     X,
 } from "lucide-react";
+import { toast } from "sonner";
 
 // ─── Pipeline Types (espelhando contetOrders.tsx)
 type PipelineStage = "pending" | "preparing" | "ready";
@@ -91,6 +92,7 @@ export function ModalOrder({ orderId, stage = "pending", onStageChange, onClose,
             setOrder(res);
         } catch (err) {
             console.log(err);
+            toast.error("Erro ao buscar pedido");
         } finally {
             setLoading(false);
         }
@@ -121,9 +123,10 @@ export function ModalOrder({ orderId, stage = "pending", onStageChange, onClose,
                 const result = await finishOrder(orderId);
                 if (result.success) {
                     await onClose();
+                    toast.success("Pedido finalizado com sucesso!");
                     router.refresh();
                 } else {
-                    console.error(result.error);
+                    toast.error(result.error || "Erro ao finalizar pedido");
                 }
             }
         } finally {

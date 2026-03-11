@@ -9,6 +9,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { createUserAdmin } from "@/actions/auth";
+import { toast } from "sonner";
 
 export function CreateUserAdmin() {
     const [open, setOpen] = useState(false);
@@ -40,10 +41,10 @@ export function CreateUserAdmin() {
             setOpen(false);
             setSelectedRole("");
             router.refresh();
+            toast.success('Usuário criado com sucesso!');
             return;
         } else {
-            console.log(result.error);
-            alert(result.error);
+            toast.error(result.error);
         }
     }
 

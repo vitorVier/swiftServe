@@ -4,7 +4,6 @@ import { SearchIcon, Trash2, User2 } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { User } from "@/lib/types";
-import { ProductForm } from "./productForm";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import { useCallback, useState } from "react";
 import { CreateUserAdmin } from "./createUserAdmin";
@@ -20,6 +19,7 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "../ui/pagination";
+import { toast } from "sonner";
 
 export function Management({ users }: { users: User[] }) {
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -73,11 +73,12 @@ export function Management({ users }: { users: User[] }) {
             if (result.success) {
                 router.refresh();
                 setUserToDelete(null);
+                toast.success("Usuário deletado com sucesso!");
             } else {
-                alert("Erro ao deletar produto");
+                toast.error(result.error || "Erro ao deletar usuário");
             }
         } catch (error) {
-            alert("Erro ao deletar produto");
+            toast.error("Erro ao deletar usuário");
         } finally {
             setIsDeleting(false);
         }

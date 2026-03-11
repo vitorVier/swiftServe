@@ -10,6 +10,7 @@ import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { updateUserAdmin } from "@/actions/auth";
 import { User } from "@/lib/types";
+import { toast } from "sonner";
 
 interface EditUserAdminProps {
     user: User;
@@ -53,9 +54,10 @@ export function EditUserAdmin({ user }: EditUserAdminProps) {
         if (result.success) {
             setOpen(false);
             router.refresh();
+            toast.success('Usuário atualizado com sucesso!');
             return;
         } else {
-            alert(result.error);
+            toast.error(result.error);
         }
     }
 

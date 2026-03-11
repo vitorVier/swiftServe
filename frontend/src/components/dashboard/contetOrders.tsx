@@ -11,6 +11,7 @@ import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { ModalOrder } from "./modalOrder";
 import { updateOrderStage } from "@/actions/orders";
+import { toast } from "sonner";
 
 // ─── Pipeline Types
 type PipelineStage = "pending" | "preparing" | "ready";
@@ -85,7 +86,7 @@ export default function ContentOrders({ token }: { token: string }) {
                 return nw;
             });
         } catch (err) {
-            console.error(err);
+            toast.error("Erro ao buscar pedidos");
         } finally {
             if (showLoading) setLoading(false);
         }
@@ -99,8 +100,6 @@ export default function ContentOrders({ token }: { token: string }) {
         }, 30_000); // Polling a cada 30 segundos
         return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, [fetchOrders]);
-
-
 
     useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
@@ -120,8 +119,9 @@ export default function ContentOrders({ token }: { token: string }) {
             if (result.success) {
                 // Se OK na API, atualizamos a visão local imediatamente para evitar recarregamento perceptível
                 setPipeline(prev => new Map(prev).set(orderId, stage));
+                toast.success("Pedido atualizado com sucesso!");
             } else {
-                console.error(result.error);
+                toast.error(result.error || "Erro ao atualizar pedido");
             }
         } finally {
             setActionLoading(prev => { const s = new Set(prev); s.delete(orderId); return s; });
@@ -138,8 +138,9 @@ export default function ContentOrders({ token }: { token: string }) {
             });
             setOrders(prev => prev.filter(o => o.id !== orderId));
             setPipeline(prev => { const m = new Map(prev); m.delete(orderId); return m; });
+            toast.success("Pedido finalizado com sucesso!");
         } catch (err) {
-            console.error(err);
+            toast.error("Erro ao finalizar pedido");
         } finally {
             setActionLoading(prev => { const s = new Set(prev); s.delete(orderId); return s; });
         }

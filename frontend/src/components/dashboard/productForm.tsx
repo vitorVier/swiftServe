@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Category } from "@/lib/types";
 import { createProduct } from "@/actions/products";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface ProductFormProps {
     categories: Category[];
@@ -52,10 +53,10 @@ export function ProductForm({ categories }: ProductFormProps) {
             setOpen(false);
             setSelectedCategory("");
             router.refresh();
+            toast.success('Produto criado com sucesso!');
             return;
         } else {
-            console.log(result.error);
-            alert(result.error);
+            toast.error(result.error);
         }
     }
 

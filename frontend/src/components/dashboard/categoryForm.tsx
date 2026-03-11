@@ -8,6 +8,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { createCategory } from "@/actions/categories";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function CategoryForm() {
     const [open, setOpen] = useState(false);
@@ -22,10 +23,11 @@ export function CategoryForm() {
         if (result.success) {
             setOpen(false);
             router.refresh();
+            toast.success('Categoria criada com sucesso!');
             return
         } else {
             // toast.error(result.error);
-            console.log(result.error)
+            toast.error(result.error)
         }
     }
 

@@ -21,6 +21,7 @@ import { ProductForm } from "./productForm";
 import { toggleProductStatus, deleteProduct } from "@/actions/products";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface ProductsClientProps {
     categories: Category[];
@@ -92,12 +93,12 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
             if (!result.success) {
                 // Revert on failure
                 setProducts(prev => prev.map(p => p.id === productId ? { ...p, disabled: currentDisabled } : p));
-                alert("Erro ao alterar o status do produto");
+                toast.error("Erro ao alterar o status do produto");
             }
         } catch (error) {
             // Revert on failure
             setProducts(prev => prev.map(p => p.id === productId ? { ...p, disabled: currentDisabled } : p));
-            alert("Erro ao alterar o status do produto");
+            toast.error("Erro ao alterar o status do produto");
         }
     };
 
@@ -109,11 +110,12 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
             if (result.success) {
                 setProducts(prev => prev.filter(p => p.id !== productToDelete.id));
                 setProductToDelete(null);
+                toast.success('Produto removido com sucesso!');
             } else {
-                alert("Erro ao deletar produto");
+                toast.error(result.error || "Erro ao deletar produto");
             }
         } catch (error) {
-            alert("Erro ao deletar produto");
+            toast.error("Erro ao deletar produto");
         } finally {
             setIsDeleting(false);
         }
