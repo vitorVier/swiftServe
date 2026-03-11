@@ -6,16 +6,29 @@ import { Button } from "../ui/button";
 import { User } from "@/lib/types";
 import { ProductForm } from "./productForm";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { CreateUserAdmin } from "./createUserAdmin";
 import { EditUserAdmin } from "./editUserAdmin";
 import { deleteUser } from "@/actions/auth";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "../ui/pagination";
 
 export function Management({ users }: { users: User[] }) {
-    const [sysUsers, setSysUsers] = useState<User[]>([])
+    const [searchQuery, setSearchQuery] = useState<string>("");
     const [userToDelete, setUserToDelete] = useState<User | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    const router = useRouter();
 
     const confirmDelete = async () => {
         if (!userToDelete) return;
@@ -24,7 +37,7 @@ export function Management({ users }: { users: User[] }) {
         try {
             const result = await deleteUser(userToDelete.id);
             if (result.success) {
-                setSysUsers(prev => prev.filter(u => u.id !== userToDelete.id));
+                router.refresh();
                 setUserToDelete(null);
             } else {
                 alert("Erro ao deletar produto");
@@ -36,6 +49,19 @@ export function Management({ users }: { users: User[] }) {
         }
     };
 
+    const filteredUsers = users.filter((user) => {
+        if (!searchQuery) return true;
+
+        const queryLowerCase = searchQuery.toLowerCase();
+        const matchesName = user.name?.toLowerCase().includes(queryLowerCase);
+        const matchesEmail = user.email?.toLowerCase().includes(queryLowerCase);
+
+        return matchesName || matchesEmail;
+    });
+
+    const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+    const paginatedUsers = filteredUsers.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
     return (
         <div className="space-y-6">
             {/* Actions: Search & Form */}
@@ -44,8 +70,11 @@ export function Management({ users }: { users: User[] }) {
                     <InputGroupInput
                         placeholder="Buscar usuário..."
                         className="bg-transparent text-white placeholder:text-gray-500"
-                    // value={searchQuery}
-                    // onChange={(e) => setSearchQuery(e.target.value)}
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(1);
+                        }}
                     />
                     <InputGroupAddon className="text-gray-500 bg-transparent border-0">
                         <SearchIcon className="w-4 h-4" />
@@ -57,7 +86,7 @@ export function Management({ users }: { users: User[] }) {
 
             {/* Table Container */}
             <div className="relative overflow-hidden rounded-2xl border border-app-border/40 bg-app-card/30 backdrop-blur-sm">
-                {users.length === 0 ? (
+                {filteredUsers.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-24 text-center">
                         <div className="bg-app-card/50 p-6 rounded-full mb-4">
                             <User2 className="w-12 h-12 text-gray-600" />
@@ -78,7 +107,7 @@ export function Management({ users }: { users: User[] }) {
                             </TableHeader>
 
                             <TableBody>
-                                {users.map((user) => (
+                                {paginatedUsers.map((user) => (
                                     <TableRow
                                         key={user.id}
                                         className="group border-app-border/20 hover:bg-white/3 transition-all duration-300"
@@ -137,6 +166,50 @@ export function Management({ users }: { users: User[] }) {
                     </div>
                 )}
             </div>
+
+            {totalPages > 1 && (
+                <div className="flex justify-center mt-6">
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (currentPage > 1) setCurrentPage(currentPage - 1);
+                                    }}
+                                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                                />
+                            </PaginationItem>
+                            {Array.from({ length: totalPages }).map((_, i) => (
+                                <PaginationItem key={i}>
+                                    <PaginationLink
+                                        href="#"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setCurrentPage(i + 1);
+                                        }}
+                                        isActive={currentPage === i + 1}
+                                        className={currentPage === i + 1 ? "bg-brand-primary text-white border-brand-primary hover:bg-brand-primary/90 hover:text-white" : "text-gray-400 hover:text-white border-app-border/40 bg-app-card/50"}
+                                    >
+                                        {i + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+                            <PaginationItem>
+                                <PaginationNext
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                                    }}
+                                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                </div>
+            )}
 
             {/* Confirmation Dialog */}
             <Dialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>

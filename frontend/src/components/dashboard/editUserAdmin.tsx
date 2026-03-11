@@ -55,7 +55,6 @@ export function EditUserAdmin({ user }: EditUserAdminProps) {
             router.refresh();
             return;
         } else {
-            console.log(result.error);
             alert(result.error);
         }
     }

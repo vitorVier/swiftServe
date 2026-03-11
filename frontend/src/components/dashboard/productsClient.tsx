@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Category, Product } from "@/lib/types";
 import { Trash2, Image as ImageIcon, SearchIcon, Package } from "lucide-react";
 import Image from "next/image";
@@ -9,6 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Switch } from "@/components/ui/switch";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
 import { ProductForm } from "./productForm";
 import { toggleProductStatus, deleteProduct } from "@/actions/products";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -21,10 +29,16 @@ interface ProductsClientProps {
 
 export function ProductsClient({ categories, initialProducts }: ProductsClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
-    // const [activeTab, setActiveTab] = useState("Todos");
     const [products, setProducts] = useState<Product[]>(initialProducts);
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // Sync local state whenever the server re-fetches and passes updated initialProducts
+    useEffect(() => {
+        setProducts(initialProducts);
+    }, [initialProducts]);
+    const ITEMS_PER_PAGE = 10;
 
     const router = useRouter();
     const pathname = usePathname();
@@ -47,6 +61,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
     const handleTabChange = (categoryName: string) => {
         const queryString = createQueryString("category", categoryName);
         router.push(`${pathname}?${queryString}`, { scroll: false });
+        setCurrentPage(1);
     };
 
     const filteredProducts = products.filter(product => {
@@ -55,6 +70,9 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
         const matchesCategory = activeTab === "Todos" || product.category?.name === activeTab;
         return matchesSearch && matchesCategory;
     });
+
+    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+    const paginatedProducts = filteredProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     const formatedPrice = (price: number) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -131,7 +149,10 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                         placeholder="Buscar produto..."
                         className="bg-transparent text-white placeholder:text-gray-500"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(1);
+                        }}
                     />
                     <InputGroupAddon className="text-gray-500 bg-transparent border-0">
                         <SearchIcon className="w-4 h-4" />
@@ -169,7 +190,7 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredProducts.map((product) => (
+                                {paginatedProducts.map((product) => (
                                     <TableRow
                                         key={product.id}
                                         className="group border-app-border/20 hover:bg-white/3 transition-all duration-300"
@@ -246,6 +267,50 @@ export function ProductsClient({ categories, initialProducts }: ProductsClientPr
                     </div>
                 )}
             </div>
+
+            {totalPages > 1 && (
+                <div className="flex justify-center mt-6">
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (currentPage > 1) setCurrentPage(currentPage - 1);
+                                    }}
+                                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                                />
+                            </PaginationItem>
+                            {Array.from({ length: totalPages }).map((_, i) => (
+                                <PaginationItem key={i}>
+                                    <PaginationLink
+                                        href="#"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setCurrentPage(i + 1);
+                                        }}
+                                        isActive={currentPage === i + 1}
+                                        className={currentPage === i + 1 ? "bg-brand-primary text-white border-brand-primary hover:bg-brand-primary/90 hover:text-white" : "text-gray-400 hover:text-white border-app-border/40 bg-app-card/50"}
+                                    >
+                                        {i + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+                            <PaginationItem>
+                                <PaginationNext
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                                    }}
+                                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                </div>
+            )}
 
             {/* Confirmation Dialog */}
             <Dialog open={!!productToDelete} onOpenChange={(open) => !open && setProductToDelete(null)}>
