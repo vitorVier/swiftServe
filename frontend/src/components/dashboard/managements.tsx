@@ -29,6 +29,40 @@ export function Management({ users }: { users: User[] }) {
     const ITEMS_PER_PAGE = 10;
 
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const activeTab = searchParams.get("role") || "Todos";
+
+    const createQueryString = useCallback((name: string, value: string) => {
+        const params = new URLSearchParams(searchParams.toString()); // Pegamos o valor do nome da role em formato de string
+
+        if (value === "Todos") {
+            params.delete(name); // Limpa a URL se for "Todos"
+        } else {
+            params.set(name, value); // O '.set' adiciona o par nome=valor (ex: role=ADMIN). Se a chave "role" já existisse, ela seria apenas atualizada.
+        }
+
+        return params.toString();
+    }, [searchParams]);
+
+    const handleTabChange = (userRole: string) => {
+        const queryString = createQueryString("role", userRole);
+        router.push(`${pathname}?${queryString}`, { scroll: false });
+        setCurrentPage(1);
+    };
+
+    const filteredUsers = users.filter((user) => {
+        const queryLowerCase = searchQuery.toLowerCase();
+        const matchesSearch = user.name.toLowerCase().includes(queryLowerCase) ||
+            user.email.toLowerCase().includes(queryLowerCase);
+        const matchesRole = activeTab === "Todos" || user?.role === activeTab;
+
+        return matchesSearch && matchesRole;
+    });
+
+    const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+    const paginatedUsers = filteredUsers.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     const confirmDelete = async () => {
         if (!userToDelete) return;
@@ -49,21 +83,29 @@ export function Management({ users }: { users: User[] }) {
         }
     };
 
-    const filteredUsers = users.filter((user) => {
-        if (!searchQuery) return true;
-
-        const queryLowerCase = searchQuery.toLowerCase();
-        const matchesName = user.name?.toLowerCase().includes(queryLowerCase);
-        const matchesEmail = user.email?.toLowerCase().includes(queryLowerCase);
-
-        return matchesName || matchesEmail;
-    });
-
-    const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
-    const paginatedUsers = filteredUsers.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
     return (
         <div className="space-y-6">
+            {/* Tabs */}
+            <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-2">
+                <Button
+                    variant={activeTab === "Todos" ? "default" : "outline"}
+                    className={`rounded-full px-6 transition-all ${activeTab === "Todos" ? 'bg-brand-primary text-white hover:bg-brand-primary/90' : 'bg-transparent text-gray-400 border-app-border hover:text-white hover:border-gray-500 hover:bg-white/5'}`}
+                    onClick={() => handleTabChange("Todos")}
+                >
+                    Todos
+                </Button>
+                {users.map(user => (
+                    <Button
+                        key={user.id}
+                        variant={activeTab === user.role ? "default" : "outline"}
+                        className={`rounded-full px-6 transition-all ${activeTab === user.role ? 'bg-brand-primary text-white hover:bg-brand-primary/90' : 'bg-transparent text-gray-400 border-app-border hover:text-white hover:border-gray-500 hover:bg-white/5'}`}
+                        onClick={() => handleTabChange(user.role)}
+                    >
+                        {user.role}
+                    </Button>
+                ))}
+            </div>
+
             {/* Actions: Search & Form */}
             <div className="flex flex-col sm:flex-row w-full items-start sm:items-center justify-between gap-3">
                 <InputGroup className="w-full sm:max-w-72 border-app-border/40 bg-app-card/30 backdrop-blur-sm">
