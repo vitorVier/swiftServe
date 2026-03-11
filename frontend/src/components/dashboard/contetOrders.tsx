@@ -86,7 +86,7 @@ export default function ContentOrders({ token }: { token: string }) {
                 return nw;
             });
         } catch (err) {
-            toast.error("Erro ao buscar pedidos");
+            throw new Error("Erro ao buscar pedidos");
         } finally {
             if (showLoading) setLoading(false);
         }
