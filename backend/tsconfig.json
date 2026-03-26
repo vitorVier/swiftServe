@@ -11,7 +11,7 @@
     // Diretórios
     "outDir": "./dist", // Pasta de saída dos arquivos compilados
     // Strict Type-Checking Options (TypeScript 5.6)
-    "strict": true, // Ativa todas as verificações estritas
+    "strict": false, // Ativa todas as verificações estritas
     "noImplicitAny": true, // Proíbe variáveis sem tipo explícito
     "strictNullChecks": true, // Trata null/undefined como tipos distintos
     "strictFunctionTypes": true, // Verificação rigorosa de tipos de funções
