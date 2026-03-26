@@ -28,17 +28,19 @@ export interface Product {
     banner: string;
     categoryId: string;
     createdAt: string;
+    disabled: boolean;
     category?: Category
 }
 
 export interface Order {
     id: string;
     table: number;
+    name?: string | null;
     status: boolean;
     draft: boolean;
     userId: string;
     createdAt: string;
-    updatedAt: string;
+    items: OrderItem[];
 }
 
 export interface OrderItem {

@@ -10,8 +10,7 @@ export class SendOrderService {
         try {
             const order = await prismaClient.order.findFirst({
                 where: {
-                    id: orderId,
-                    name: name
+                    id: orderId
                 }
             })
             if (!order) throw new Error("Order not found")

@@ -1,14 +1,56 @@
 import { Button } from "@/components/button";
 import { Input } from "@/components/inputs";
-import { borderRadius, colors, fontSize, spacing } from "@/constants/theme";
+import { colors, fontSize, spacing } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
+import api from "@/services/api";
+import { Order } from "@/types";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Text, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { Text, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Dashboard() {
     const { signOut } = useAuth();
     const insets = useSafeAreaInsets();
+
+    const [tableNumber, setTableNumber] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const router = useRouter();
+
+    async function handleCreateOrder() {
+        if (!tableNumber.trim()) {
+            Alert.alert("Atenção", "Preencha o número da mesa para prosseguir!");
+            return;
+        }
+
+        const table = parseInt(tableNumber);
+
+        if (isNaN(table) || table <= 0) {
+            Alert.alert("Atenção", "Número da mesa inválido!");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await api.post<Order>("/order", { table: table });
+            router.push({
+                pathname: "/(authenticated)/order",
+                params: {
+                    table: response.data.table.toString(),
+                    orderId: response.data.id
+                }
+            });
+
+            setTableNumber("");
+        } catch (err) {
+            Alert.alert("Error", "Erro ao criar pedido!")
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -37,8 +79,13 @@ export default function Dashboard() {
                         </View>
 
                         <Text style={styles.title}>Novo Pedido</Text>
-                        <Input placeholder="Número da mesa" />
-                        <Button style={styles.button} title="Iniciar Pedido" onPress={() => { }} />
+                        <Input
+                            placeholder="Número da mesa"
+                            value={tableNumber}
+                            onChangeText={setTableNumber}
+                            keyboardType="numeric"
+                        />
+                        <Button style={styles.button} title="Iniciar Pedido" onPress={handleCreateOrder} />
                     </View>
                 </ScrollView>
 
@@ -56,7 +103,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     scrollContent: {
-        flexGrow: 1
+        flexGrow: 1,
     },
     header: {
         flexDirection: "row",
@@ -102,17 +149,18 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: colors.primary,
         textAlign: "left",
-        marginBottom: spacing.lg,
+        marginBottom: spacing.sm,
         opacity: 0.9,
     },
     button: {
-        marginTop: spacing.lg,
-        height: 56,
-        borderRadius: 16,
+        marginTop: spacing.md,
+        height: 58,
+        borderRadius: 18,
+        backgroundColor: colors.brand,
         shadowColor: colors.brand,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 5,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.4,
+        shadowRadius: 20,
+        elevation: 10,
     }
 })

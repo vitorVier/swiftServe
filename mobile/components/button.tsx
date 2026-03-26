@@ -53,6 +53,6 @@ const styles = StyleSheet.create({
     text: {
         color: colors.background,
         fontSize: fontSize.lg,
-        fontWeight: "600"
+        fontWeight: "bold"
     }
 })
