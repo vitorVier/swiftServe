@@ -53,6 +53,7 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "dist"
   ] // Arquivos/pastas excluídos
 }
