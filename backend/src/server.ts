@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 app.use(router);
 
-app.use((error: Error, _: Request, res: Response, next: NextFunction) => {
+app.use((error: Error, _request: Request, res: Response, _next: NextFunction) => {
     if (error instanceof Error) {
         return res.status(400).json({
             message: error.message
